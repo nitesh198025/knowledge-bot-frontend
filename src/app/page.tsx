@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 type Source = {
   id: string;
   score?: number;
+  adjustedScore?: number;
   sectionTitle?: string;
   docName?: string;
   chunkType?: string;
@@ -20,7 +21,7 @@ type Message = {
 const INITIAL_MESSAGE: Message = {
   role: "assistant",
   content:
-    "Hi, I’m your Digital Support Assistant. Ask me an issue like: User cannot access ERP after permission change.",
+    "Hi, I’m your SOP Support Assistant. Choose a domain first, then ask your issue.",
 };
 
 type ParsedAnswer = {
@@ -179,6 +180,7 @@ export default function HomePage() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [domain, setDomain] = useState<"technical" | "finance">("technical");
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -192,7 +194,11 @@ export default function HomePage() {
     const trimmed = query.trim();
     if (!trimmed || loading) return;
 
-    const userMsg: Message = { role: "user", content: trimmed };
+    const userMsg: Message = {
+      role: "user",
+      content: `[${domain.toUpperCase()}] ${trimmed}`,
+    };
+
     setMessages((prev) => [...prev, userMsg]);
     setQuery("");
     setLoading(true);
@@ -204,7 +210,7 @@ export default function HomePage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: trimmed }),
+        body: JSON.stringify({ query: trimmed, domain }),
       });
 
       const data = await res.json();
@@ -266,9 +272,9 @@ export default function HomePage() {
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="mb-6 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">LNCloudSuite Assistant</h1>
+            <h1 className="text-3xl font-bold text-slate-900">SOP Assistant</h1>
             <p className="mt-2 text-sm text-slate-600">
-              Ask an issue and get a grounded resolution from your knowledge base.
+              Choose a domain, then ask your issue.
             </p>
           </div>
 
@@ -346,6 +352,37 @@ export default function HomePage() {
             </div>
 
             <div className="space-y-3">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-900">
+                  Select Domain
+                </label>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setDomain("technical")}
+                    className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+                      domain === "technical"
+                        ? "bg-slate-900 text-white"
+                        : "border border-slate-300 bg-white text-slate-700"
+                    }`}
+                  >
+                    Technical
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setDomain("finance")}
+                    className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+                      domain === "finance"
+                        ? "bg-slate-900 text-white"
+                        : "border border-slate-300 bg-white text-slate-700"
+                    }`}
+                  >
+                    Finance
+                  </button>
+                </div>
+              </div>
+
               <textarea
                 ref={textareaRef}
                 value={query}
