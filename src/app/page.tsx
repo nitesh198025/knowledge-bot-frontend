@@ -21,7 +21,7 @@ type Message = {
 const INITIAL_MESSAGE: Message = {
   role: "assistant",
   content:
-    "Hi, I’m your SOP Support Assistant. Choose a domain first, then ask your issue.",
+    "Hi, I’m your Digital Support Assistant. Choose a domain first, then ask your issue.",
 };
 
 type ParsedAnswer = {
@@ -272,7 +272,7 @@ export default function HomePage() {
       <div className="mx-auto max-w-6xl px-4 py-8">
         <div className="mb-6 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">SOP Assistant</h1>
+            <h1 className="text-3xl font-bold text-slate-900">InforCloudSuite Assistant</h1>
             <p className="mt-2 text-sm text-slate-600">
               Choose a domain, then ask your issue.
             </p>
